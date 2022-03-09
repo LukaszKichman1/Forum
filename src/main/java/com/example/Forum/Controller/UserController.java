@@ -23,10 +23,9 @@ public class UserController {
     }
 
     @PostMapping("/registration")
-    public ResponseEntity userRegistraion(@RequestBody User user)
+    public ResponseEntity<User> userRegistraion(@RequestBody User user)
     {
-        userService.save(user);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(userService.save(user));
     }
 
     @PostMapping("/activation")
@@ -36,10 +35,24 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/oneuser")
-    public Optional<User> findUserById(@RequestParam int id)
+
+    @GetMapping("/showoneuserbyid")
+    public ResponseEntity<Optional> findUserById(@RequestParam int id)
     {
-        return userService.findById(id);
+        return ResponseEntity.ok(userService.findById(id));
+    }
+
+    @GetMapping("/showoneuserbynickname")
+    public ResponseEntity<Optional> findUserByNickName(@RequestParam String nickName)
+    {
+        return ResponseEntity.ok(userService.findByNickName(nickName));
+    }
+
+    @DeleteMapping("/deletebyid")
+    public ResponseEntity deleteUserById(@RequestParam int id)
+    {
+        userService.deleteById(id);
+        return ResponseEntity.ok().build();
     }
 
 

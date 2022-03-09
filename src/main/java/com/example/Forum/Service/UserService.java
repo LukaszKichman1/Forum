@@ -4,6 +4,7 @@ import com.example.Forum.Entity.Token;
 import com.example.Forum.Entity.User;
 import com.example.Forum.Exception.UserCanNotBeActivationException;
 import com.example.Forum.Exception.UserCanNotBeCreateException;
+import com.example.Forum.Exception.UserNotFoundException;
 import com.example.Forum.Repository.TokenRepository;
 import com.example.Forum.Repository.UserRepository;
 import org.hibernate.internal.build.AllowPrintStacktrace;
@@ -80,10 +81,45 @@ public class UserService {
 
     public Optional<User> findById(int id)
     {
-        return userRepository.findById(id);
+        Optional<User> userOptional=userRepository.findById(id);
+        if(userOptional.isPresent())
+        {
+            return userOptional;
+        }
+        else
+        {
+            throw new UserNotFoundException("we cant find user with that Id");
+        }
+    }
+
+    public Optional<User> findByNickName(String nickName)
+    {
+        Optional<User> userOptional=userRepository.findByNickName(nickName);
+        if(userOptional.isPresent())
+        {
+            return userOptional;
+        }
+        else
+        {
+            throw new UserNotFoundException("we cant find user with that nickName");
+        }
     }
 
 
+    @Transactional
+    public void deleteById(int id)
+    {
+        Optional<User> userOptional=userRepository.findById(id);
+        if(userOptional.isPresent())
+        {
+            User user =userOptional.get();
+            userRepository.deleteById(user.getId_user());
+        }
+        else
+        {
+            throw new UserNotFoundException("we cant find user with that Id");
+        }
+    }
 }
 
 

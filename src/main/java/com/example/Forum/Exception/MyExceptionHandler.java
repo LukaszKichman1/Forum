@@ -24,4 +24,13 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<Object>(new RequestError(ex.getMessage(), HttpStatus.NOT_ACCEPTABLE, LocalDateTime.now()),HttpStatus.NOT_ACCEPTABLE);
     }
 
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<Object> handleUserNotFoundException(UserNotFoundException ex, WebRequest webRequest)
+    {
+        return new ResponseEntity<Object>(new RequestError(ex.getMessage(), HttpStatus.NOT_FOUND, LocalDateTime.now()),HttpStatus.NOT_FOUND);
+    }
+
+
+
+
 }
