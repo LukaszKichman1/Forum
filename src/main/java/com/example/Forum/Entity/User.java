@@ -1,5 +1,7 @@
 package com.example.Forum.Entity;
 
+import org.springframework.security.core.parameters.P;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -7,7 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name="users")
+@Table(name = "users")
 public class User {
 
 
@@ -28,11 +30,11 @@ public class User {
     private boolean isEnabled;
 
     @OneToMany(
-            mappedBy = "user",
-            fetch = FetchType.EAGER,
             cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER,
             orphanRemoval = true
     )
+    @JoinColumn(name = "user_id", referencedColumnName = "Id_user")
     private List<Post> postList = new ArrayList<>();
 
     @OneToMany(
@@ -40,13 +42,14 @@ public class User {
             fetch = FetchType.EAGER,
             cascade = CascadeType.ALL
     )
-    private Set<Comment> commentSet=new HashSet<>();
+    private Set<Comment> commentSet = new HashSet<>();
 
     @OneToOne
     @JoinColumn(name = "id_token", referencedColumnName = "Id_token")
     private Token token;
 
     public User() {
+        super();
     }
 
     public void setEnabled(boolean enabled) {
@@ -55,6 +58,10 @@ public class User {
 
     public void setPostList(List<Post> postList) {
         this.postList = postList;
+    }
+
+    public void addPost(Post post) {
+        this.postList.add(post);
     }
 
     public void setCommentSet(Set<Comment> commentSet) {
@@ -112,9 +119,6 @@ public class User {
         private String email;
         private String roles;
         private boolean isEnabled;
-        private List<Post> postList;
-        private Set<Comment> commentSet;
-        private Token token;
 
 
         public Builder nickName(String nickName) {

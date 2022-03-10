@@ -42,9 +42,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 .authorizeRequests()
                 .antMatchers("/user/registration").permitAll()
                 .antMatchers("/user/activation").permitAll()
+                .antMatchers("/post/showall").permitAll()
 
                 .antMatchers("/post/add").authenticated()
-
+                .antMatchers("/post/showonybyid").authenticated()
+                .antMatchers("/post/deleteownpostbyid").authenticated()
+                .antMatchers("/post/deleteallownpost").authenticated()
 
 
                 .antMatchers("/user/showoneuserbyid").hasRole("ADMIN")

@@ -30,7 +30,15 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<Object>(new RequestError(ex.getMessage(), HttpStatus.NOT_FOUND, LocalDateTime.now()),HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(PostNotFoundException.class)
+    public ResponseEntity<Object> handlePostNotFoundException(PostNotFoundException ex, WebRequest webRequest)
+    {
+        return new ResponseEntity<Object>(new RequestError(ex.getMessage(), HttpStatus.NOT_FOUND, LocalDateTime.now()),HttpStatus.NOT_FOUND);
+    }
 
-
-
+    @ExceptionHandler(UserIsNotOwnerException.class)
+    public ResponseEntity<Object> handleUserIsNotOwnerException(UserIsNotOwnerException ex, WebRequest webRequest)
+    {
+        return new ResponseEntity<Object>(new RequestError(ex.getMessage(), HttpStatus.CONFLICT, LocalDateTime.now()),HttpStatus.CONFLICT);
+    }
 }

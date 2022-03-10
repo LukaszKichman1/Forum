@@ -34,13 +34,13 @@ public class UserService {
 
     public User save(User user) {
 
-        Optional<User> userOptional =userRepository.findByNickName(user.getNickName());
+        Optional<User> userOptional = userRepository.findByNickName(user.getNickName());
         if (user.getLogin() == null
                 || user.getEmail() == null
                 || user.getPassword() == null
                 || user.getNickName() == null
                 || userOptional.isPresent()
-            ) {
+        ) {
             throw new UserCanNotBeCreateException("user have empty fields or user with that nickname already exist");
         } else {
             User userBuilder = new User.Builder()
@@ -60,7 +60,7 @@ public class UserService {
         }
     }
 
-    public Optional<User>findByLogin(String login) {
+    public Optional<User> findByLogin(String login) {
         return userRepository.findByLogin(login);
 
     }
@@ -80,50 +80,37 @@ public class UserService {
         }
     }
 
-    public Optional<User> findById(int id)
-    {
-        Optional<User> userOptional=userRepository.findById(id);
-        if(userOptional.isPresent())
-        {
+    public Optional<User> findById(int id) {
+        Optional<User> userOptional = userRepository.findById(id);
+        if (userOptional.isPresent()) {
             return userOptional;
-        }
-        else
-        {
+        } else {
             throw new UserNotFoundException("we cant find user with that Id");
         }
     }
 
-    public Optional<User> findByNickName(String nickName)
-    {
-        Optional<User> userOptional=userRepository.findByNickName(nickName);
-        if(userOptional.isPresent())
-        {
+    public Optional<User> findByNickName(String nickName) {
+        Optional<User> userOptional = userRepository.findByNickName(nickName);
+        if (userOptional.isPresent()) {
             return userOptional;
-        }
-        else
-        {
+        } else {
             throw new UserNotFoundException("we cant find user with that nickName");
         }
     }
 
 
     @Transactional
-    public void deleteById(int id)
-    {
-        Optional<User> userOptional=userRepository.findById(id);
-        if(userOptional.isPresent())
-        {
-            User user =userOptional.get();
+    public void deleteById(int id) {
+        Optional<User> userOptional = userRepository.findById(id);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
             userRepository.deleteById(user.getId_user());
-        }
-        else
-        {
+        } else {
             throw new UserNotFoundException("we cant find user with that Id");
         }
     }
 
-    public List<User> findAll()
-    {
+    public List<User> findAll() {
         return userRepository.findAll();
     }
 

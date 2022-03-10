@@ -13,16 +13,10 @@ public class Post {
     private int Id_post;
     private String content;
 
-    @ManyToOne()
-    @JoinColumn(
-            name = "user_id",
-            referencedColumnName = "Id_user"
-    )
-    private User user;
-
     @OneToMany(
             mappedBy = "post",
             cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER,
             orphanRemoval = true
     )
     private List<Comment> commentList = new ArrayList<>();
@@ -38,9 +32,6 @@ public class Post {
         return content;
     }
 
-    public User getUser() {
-        return user;
-    }
 
     public List<Comment> getCommentList() {
         return commentList;
@@ -48,24 +39,15 @@ public class Post {
 
     public static class Builder {
         private String content;
-        private User user;
-
 
         public Builder content(String content) {
             this.content = content;
             return this;
         }
 
-        public Builder user(User user) {
-            this.user = user;
-            return this;
-        }
-
-
-        public Post Build() {
+        public Post build() {
             Post post = new Post();
             post.content = this.content;
-            post.user = this.user;
             return post;
         }
 
