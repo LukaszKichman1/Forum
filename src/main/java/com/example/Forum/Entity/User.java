@@ -15,10 +15,8 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int Id_user;
 
-    @Column(unique = true)
     private String nickName;
 
-    @Column(unique = true)
     private String login;
 
     private String password;

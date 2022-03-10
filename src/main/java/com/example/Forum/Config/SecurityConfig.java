@@ -42,12 +42,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 .authorizeRequests()
                 .antMatchers("/user/registration").permitAll()
                 .antMatchers("/user/activation").permitAll()
+
+                .antMatchers("/post/add").authenticated()
+
+
+
                 .antMatchers("/user/showoneuserbyid").hasRole("ADMIN")
                 .antMatchers("/user/showoneuserbynickname").hasRole("ADMIN")
                 .antMatchers("/user/deletebyid").hasRole("ADMIN")
-                .antMatchers("/deletemoldy").authenticated()
-                .antMatchers("/deleteused").authenticated()
-                .antMatchers("/logs").hasRole("ADMIN")
+                .antMatchers("/user/all").hasRole("ADMIN")
                 .and()
                 .formLogin().permitAll();
     }

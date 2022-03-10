@@ -34,14 +34,15 @@ public class UserService {
 
     public User save(User user) {
 
+        Optional<User> userOptional =userRepository.findByNickName(user.getNickName());
         if (user.getLogin() == null
                 || user.getEmail() == null
                 || user.getPassword() == null
-                || user.getNickName() == null) {
-            throw new UserCanNotBeCreateException("user have empty fields");
+                || user.getNickName() == null
+                || userOptional.isPresent()
+            ) {
+            throw new UserCanNotBeCreateException("user have empty fields or user with that nickname already exist");
         } else {
-
-            System.out.println(user.getLogin() + user.getNickName());
             User userBuilder = new User.Builder()
                     .nickName(user.getNickName())
                     .login(user.getLogin())
@@ -120,6 +121,12 @@ public class UserService {
             throw new UserNotFoundException("we cant find user with that Id");
         }
     }
+
+    public List<User> findAll()
+    {
+        return userRepository.findAll();
+    }
+
 }
 
 
