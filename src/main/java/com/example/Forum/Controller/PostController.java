@@ -49,4 +49,10 @@ public class PostController {
         return ResponseEntity.ok().build();
     }
 
+    @DeleteMapping("/deletepostbyid")
+    public ResponseEntity deletePostById(@RequestParam int id) {
+        postService.deletePostById(id);
+        return ResponseEntity.ok().build();
+    }
+    
 }

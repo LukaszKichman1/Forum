@@ -85,5 +85,16 @@ public class PostService {
         }
     }
 
-
+    @Transactional
+    public void deletePostById(int id) {
+        Optional<Post> optionalPost = findById(id);
+        if (optionalPost.isPresent()) {
+            postRepository.deleteById(id);
+        } else {
+            throw new PostNotFoundException("we can not find post with that id");
+        }
+    }
 }
+
+
+
