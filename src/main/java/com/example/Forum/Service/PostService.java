@@ -94,6 +94,27 @@ public class PostService {
             throw new PostNotFoundException("we can not find post with that id");
         }
     }
+
+    @Transactional
+    public void updatePost(String content,int id)
+    {
+        String loggeduser = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<User> userOptional = userService.findByNickName(loggeduser);
+        Optional<Post> postOptional=findById(id);
+        if (userOptional.isPresent() && postOptional.isPresent())
+        {
+            List<Post> postList=userOptional.get().getPostList();
+            if(postList.contains(postOptional.get()))
+            {
+               postRepository.updateContent(content,id);
+            }
+        }else {
+            throw new PostNotFoundException("we can not find post with that id");
+        }
+
+
+    }
+
 }
 
 

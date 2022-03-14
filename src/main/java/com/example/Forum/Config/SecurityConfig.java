@@ -48,7 +48,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 .antMatchers("/post/showonybyid").authenticated()
                 .antMatchers("/post/deleteownpostbyid").authenticated()
                 .antMatchers("/post/deleteallownpost").authenticated()
-
+                .antMatchers("/post/updatepost").authenticated()
 
                 .antMatchers("/user/showoneuserbyid").hasRole("ADMIN")
                 .antMatchers("/user/showoneuserbynickname").hasRole("ADMIN")

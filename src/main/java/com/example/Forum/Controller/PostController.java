@@ -54,5 +54,12 @@ public class PostController {
         postService.deletePostById(id);
         return ResponseEntity.ok().build();
     }
-    
+
+    @PutMapping("/updatepost")
+    public ResponseEntity updatePost(@RequestParam String content,int id)
+    {
+        postService.updatePost(content,id);
+        return ResponseEntity.ok().build();
+    }
+
 }
