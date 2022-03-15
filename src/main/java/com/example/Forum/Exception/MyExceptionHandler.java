@@ -41,4 +41,11 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
     {
         return new ResponseEntity<Object>(new RequestError(ex.getMessage(), HttpStatus.CONFLICT, LocalDateTime.now()),HttpStatus.CONFLICT);
     }
+
+    @ExceptionHandler(CommentNotFoundException.class)
+    public ResponseEntity<Object> handleCommentNotFoundException(CommentNotFoundException ex, WebRequest webRequest)
+    {
+        return new ResponseEntity<Object>(new RequestError(ex.getMessage(), HttpStatus.NOT_FOUND, LocalDateTime.now()),HttpStatus.NOT_FOUND);
+    }
+
 }

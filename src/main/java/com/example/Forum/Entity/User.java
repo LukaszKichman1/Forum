@@ -1,5 +1,6 @@
 package com.example.Forum.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.security.core.parameters.P;
 
 import javax.persistence.*;
@@ -30,19 +31,22 @@ public class User {
     private boolean isEnabled;
 
     @OneToMany(
+            mappedBy = "user",
             cascade = CascadeType.ALL,
             fetch = FetchType.EAGER,
             orphanRemoval = true
     )
-    @JoinColumn(name = "user_id", referencedColumnName = "Id_user")
+    @JsonIgnoreProperties({"user","commentList"})
     private List<Post> postList = new ArrayList<>();
 
     @OneToMany(
             mappedBy = "user",
+            cascade = CascadeType.ALL,
             fetch = FetchType.EAGER,
-            cascade = CascadeType.ALL
+            orphanRemoval = true
     )
-    private Set<Comment> commentSet = new HashSet<>();
+    @JsonIgnoreProperties("user")
+    private Set<Comment> commentSet=new HashSet<>();
 
     @OneToOne
     @JoinColumn(name = "id_token", referencedColumnName = "Id_token")
@@ -64,6 +68,10 @@ public class User {
         this.postList.add(post);
     }
 
+    public void addComment(Comment comment)
+    {
+        this.commentSet.add(comment);
+    }
     public void setCommentSet(Set<Comment> commentSet) {
         this.commentSet = commentSet;
     }

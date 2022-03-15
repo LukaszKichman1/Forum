@@ -49,12 +49,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 .antMatchers("/post/deleteownpostbyid").authenticated()
                 .antMatchers("/post/deleteallownpost").authenticated()
                 .antMatchers("/post/updatepost").authenticated()
+                .antMatchers("/comment/deleteowncommentbyid").authenticated()
+                .antMatchers("/comment/updatecomment").authenticated()
 
                 .antMatchers("/user/showoneuserbyid").hasRole("ADMIN")
                 .antMatchers("/user/showoneuserbynickname").hasRole("ADMIN")
                 .antMatchers("/user/deletebyid").hasRole("ADMIN")
                 .antMatchers("/post/deletepostbyid").hasRole("ADMIN")
                 .antMatchers("/user/all").hasRole("ADMIN")
+                .antMatchers("/comment/deletecommentbyid").hasRole("ADMIN")
                 .and()
                 .formLogin().permitAll();
     }

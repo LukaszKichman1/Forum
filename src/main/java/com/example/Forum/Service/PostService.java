@@ -34,8 +34,11 @@ public class PostService {
         if (userOptional.isPresent()) {
             Post postBuilder = new Post.Builder()
                     .content(post.getContent())
+                    .user(userOptional.get())
                     .build();
+
             userOptional.get().addPost(postBuilder);
+
             return postRepository.save(postBuilder);
         } else {
             throw new UserNotFoundException("we cant find user with that Id");
@@ -65,8 +68,7 @@ public class PostService {
 
             Optional<Post> optionalPost = findById(id);
             if (optionalPost.isPresent() && postList.contains(optionalPost.get())) {
-                Post post = optionalPost.get();
-                postList.remove(post);
+                postList.remove(optionalPost.get());
             } else {
                 throw new UserIsNotOwnerException("You can not delete not your own post");
             }

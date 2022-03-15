@@ -1,15 +1,114 @@
 package com.example.Forum.Service;
 
+import com.example.Forum.Entity.Comment;
+import com.example.Forum.Entity.Post;
+import com.example.Forum.Entity.User;
+import com.example.Forum.Exception.CommentNotFoundException;
+import com.example.Forum.Exception.PostNotFoundException;
+import com.example.Forum.Exception.UserIsNotOwnerException;
+import com.example.Forum.Exception.UserNotFoundException;
 import com.example.Forum.Repository.CommentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import javax.persistence.Table;
+import javax.transaction.Transactional;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class CommentService {
+
     private CommentRepository commentRepository;
+    private PostService postService;
+    private UserService userService;
 
     @Autowired
-    public CommentService(CommentRepository commentRepository) {
+    public CommentService(CommentRepository commentRepository, PostService postService, UserService userService) {
         this.commentRepository = commentRepository;
+        this.postService = postService;
+        this.userService = userService;
     }
+
+    @Transactional
+    public Comment save(int id, String content) {
+        String loggeduser = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<User> userOptional = userService.findByNickName(loggeduser);
+        Optional<Post> optionalPost = postService.findById(id);
+        if (userOptional.isPresent() && optionalPost.isPresent()) {
+            Comment commentBuilder = new Comment.Builder()
+                    .content(content)
+                    .user(userOptional.get())
+                    .post(optionalPost.get())
+                    .build();
+            userOptional.get().addComment(commentBuilder);
+            optionalPost.get().addComment(commentBuilder);
+            return commentRepository.save(commentBuilder);
+        } else {
+            throw new UserNotFoundException("we cant find user with that Id");
+        }
+
+
+    }
+
+    public Optional<Comment> findById(int id) {
+        Optional<Comment> optionalComment = commentRepository.findById(id);
+        if (optionalComment.isPresent()) {
+            return optionalComment;
+        } else {
+            throw new CommentNotFoundException("we cant find comment with that id");
+        }
+    }
+
+    @Transactional
+    public void deleteOwnCommentById(int id) {
+        String loggeduser = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<User> userOptional = userService.findByNickName(loggeduser);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            Set<Comment> commentSet = user.getCommentSet();
+
+            Optional<Comment> optionalComment = findById(id);
+            if (optionalComment.isPresent() && commentSet.contains(optionalComment.get())) {
+                commentRepository.deleteOwnCommentById(id);
+            } else {
+                throw new UserIsNotOwnerException("You can not delete not your own comment");
+            }
+
+        }
+    }
+
+
+    @Transactional
+    public void deleteCommentById(int id) {
+        Optional<Comment> optionalComment = findById(id);
+        if (optionalComment.isPresent()) {
+            commentRepository.deleteOwnCommentById(id);
+        } else {
+            throw new CommentNotFoundException("we cant find comment with that id");
+        }
+    }
+
+    public void updateComment(String content, int id)
+    {
+        String loggeduser = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<User> userOptional = userService.findByNickName(loggeduser);
+        Optional<Comment> commentOptional=findById(id);
+        if(userOptional.isPresent() && commentOptional.isPresent())
+        {
+            Set<Comment> commentSet=userOptional.get().getCommentSet();
+            if(commentSet.contains(commentOptional.get()))
+            {
+                commentRepository.updateComment(content,id);
+            }
+        }else {
+            throw new CommentNotFoundException("we cant find comment with that id");
+        }
+    }
+
+
 }
+
+
