@@ -20,7 +20,7 @@ public class Comment {
 
     )
     @JoinColumn(name="user_id",referencedColumnName = "Id_user")
-    @JsonIgnoreProperties({"postList","commentSet"})
+    @JsonIgnoreProperties({"postList","commentList"})
     private User user;
 
     @ManyToOne(

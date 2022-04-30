@@ -8,6 +8,8 @@ import com.example.Forum.Exception.PostNotFoundException;
 import com.example.Forum.Exception.UserIsNotOwnerException;
 import com.example.Forum.Exception.UserNotFoundException;
 import com.example.Forum.Repository.CommentRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,7 @@ public class CommentService {
     private CommentRepository commentRepository;
     private PostService postService;
     private UserService userService;
+    Logger logger= LoggerFactory.getLogger(CommentService.class);
 
     @Autowired
     public CommentService(CommentRepository commentRepository, PostService postService, UserService userService) {
@@ -45,6 +48,7 @@ public class CommentService {
                     .build();
             userOptional.get().addComment(commentBuilder);
             optionalPost.get().addComment(commentBuilder);
+            logger.trace("User  "+userOptional.get().getNickName()+"create comment with id  "+commentBuilder.getId_comment());
             return commentRepository.save(commentBuilder);
         } else {
             throw new UserNotFoundException("we cant find user with that Id");
@@ -68,10 +72,11 @@ public class CommentService {
         Optional<User> userOptional = userService.findByNickName(loggeduser);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            Set<Comment> commentSet = user.getCommentSet();
+            List<Comment> commentList = user.getCommentList();
 
             Optional<Comment> optionalComment = findById(id);
-            if (optionalComment.isPresent() && commentSet.contains(optionalComment.get())) {
+            if (optionalComment.isPresent() && commentList.contains(optionalComment.get())) {
+                logger.trace("User" +userOptional.get().getNickName() +"delete his own comment with id  "+ optionalComment.get().getId_comment());
                 commentRepository.deleteOwnCommentById(id);
             } else {
                 throw new UserIsNotOwnerException("You can not delete not your own comment");
@@ -91,6 +96,7 @@ public class CommentService {
         }
     }
 
+    @Transactional
     public void updateComment(String content, int id)
     {
         String loggeduser = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -98,9 +104,10 @@ public class CommentService {
         Optional<Comment> commentOptional=findById(id);
         if(userOptional.isPresent() && commentOptional.isPresent())
         {
-            Set<Comment> commentSet=userOptional.get().getCommentSet();
-            if(commentSet.contains(commentOptional.get()))
+            List<Comment> commentList=userOptional.get().getCommentList();
+            if(commentList.contains(commentOptional.get()))
             {
+                logger.trace("User" +userOptional.get().getNickName() +"update his own comment with id  "+commentOptional.get().getId_comment());
                 commentRepository.updateComment(content,id);
             }
         }else {

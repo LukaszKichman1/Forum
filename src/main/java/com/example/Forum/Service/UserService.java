@@ -8,6 +8,8 @@ import com.example.Forum.Exception.UserNotFoundException;
 import com.example.Forum.Repository.TokenRepository;
 import com.example.Forum.Repository.UserRepository;
 import org.hibernate.internal.build.AllowPrintStacktrace;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,7 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
     private TokenRepository tokenRepository;
     private MailService mailService;
+    Logger logger = LoggerFactory.getLogger(UserService.class);
 
     @Autowired
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, TokenRepository tokenRepository, MailService mailService) {
@@ -56,6 +59,7 @@ public class UserService {
             userBuilder.setToken(token);
             tokenRepository.save(token);
             mailService.SenderMail(user.getEmail(), "link : http://localhost:8080/user/activation   Your token=" + token.getValue(), "activation of your account");
+            logger.trace("User" +userBuilder.getNickName() +" was created");
             return userRepository.save(userBuilder);
         }
     }
@@ -74,6 +78,7 @@ public class UserService {
                 .get().
                 getToken().
                 getValue() == valueOfToken) {
+            logger.trace("User" +optionalUser.get().getNickName() +" was activated");
             optionalUser.get().setEnabled(true);
         } else {
             throw new UserCanNotBeActivationException("we cant find user with this id or invalid token value");
@@ -104,6 +109,7 @@ public class UserService {
         Optional<User> userOptional = userRepository.findById(id);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
+            logger.trace("User" +userOptional.get().getNickName() +" was deleted");
             userRepository.deleteById(user.getId_user());
         } else {
             throw new UserNotFoundException("we cant find user with that Id");

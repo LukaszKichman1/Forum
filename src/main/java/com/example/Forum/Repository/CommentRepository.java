@@ -14,7 +14,7 @@ public interface CommentRepository extends JpaRepository<Comment,Integer> {
     void deleteOwnCommentById(int id);
 
     @Modifying
-    @Query(nativeQuery= true,value="UPDATE comments SET content=?1, where id_comment = ?2")
+    @Query(nativeQuery= true,value="UPDATE comments SET content=?1 WHERE id_comment = ?2")
     void updateComment(String content,int id);
 
 }

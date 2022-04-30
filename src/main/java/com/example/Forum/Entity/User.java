@@ -33,7 +33,6 @@ public class User {
     @OneToMany(
             mappedBy = "user",
             cascade = CascadeType.ALL,
-            fetch = FetchType.EAGER,
             orphanRemoval = true
     )
     @JsonIgnoreProperties({"user","commentList"})
@@ -46,7 +45,7 @@ public class User {
             orphanRemoval = true
     )
     @JsonIgnoreProperties("user")
-    private Set<Comment> commentSet=new HashSet<>();
+    private List<Comment> commentList =new ArrayList<>();
 
     @OneToOne
     @JoinColumn(name = "id_token", referencedColumnName = "Id_token")
@@ -56,68 +55,94 @@ public class User {
         super();
     }
 
-    public void setEnabled(boolean enabled) {
-        isEnabled = enabled;
-    }
-
-    public void setPostList(List<Post> postList) {
-        this.postList = postList;
-    }
-
-    public void addPost(Post post) {
-        this.postList.add(post);
-    }
-
-    public void addComment(Comment comment)
-    {
-        this.commentSet.add(comment);
-    }
-    public void setCommentSet(Set<Comment> commentSet) {
-        this.commentSet = commentSet;
-    }
-
-    public void setToken(Token token) {
-        this.token = token;
+    public String getNickName() {
+        return nickName;
     }
 
     public int getId_user() {
         return Id_user;
     }
 
-    public String getNickName() {
-        return nickName;
+    public void addPost(Post post)
+    {
+        this.postList.add(post);
+    }
+
+    public void setId_user(int id_user) {
+        Id_user = id_user;
+    }
+
+    public void addComment(Comment comment)
+    {
+        this.commentList.add(comment);
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
     }
 
     public String getLogin() {
         return login;
     }
 
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
     public String getPassword() {
         return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getEmail() {
         return email;
     }
 
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public String getRoles() {
         return roles;
+    }
+
+    public void setRoles(String roles) {
+        this.roles = roles;
     }
 
     public boolean isEnabled() {
         return isEnabled;
     }
 
+    public void setEnabled(boolean enabled) {
+        isEnabled = enabled;
+    }
+
     public List<Post> getPostList() {
         return postList;
     }
 
-    public Set<Comment> getCommentSet() {
-        return commentSet;
+    public void setPostList(List<Post> postList) {
+        this.postList = postList;
+    }
+
+    public List<Comment> getCommentList() {
+        return commentList;
+    }
+
+    public void setCommentList(List<Comment> commentList) {
+        this.commentList = commentList;
     }
 
     public Token getToken() {
         return token;
+    }
+
+    public void setToken(Token token) {
+        this.token = token;
     }
 
     public static class Builder {

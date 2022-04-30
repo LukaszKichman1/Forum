@@ -6,6 +6,8 @@ import com.example.Forum.Exception.PostNotFoundException;
 import com.example.Forum.Exception.UserIsNotOwnerException;
 import com.example.Forum.Exception.UserNotFoundException;
 import com.example.Forum.Repository.PostRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.parameters.P;
@@ -20,6 +22,7 @@ public class PostService {
 
     private PostRepository postRepository;
     private UserService userService;
+    Logger logger= LoggerFactory.getLogger(PostService.class);
 
     @Autowired
     public PostService(PostRepository postRepository, UserService userService) {
@@ -38,7 +41,7 @@ public class PostService {
                     .build();
 
             userOptional.get().addPost(postBuilder);
-
+            logger.trace("User    " +userOptional.get().getNickName() +" create post with id   " +post.getId_post());
             return postRepository.save(postBuilder);
         } else {
             throw new UserNotFoundException("we cant find user with that Id");
@@ -68,6 +71,7 @@ public class PostService {
 
             Optional<Post> optionalPost = findById(id);
             if (optionalPost.isPresent() && postList.contains(optionalPost.get())) {
+                logger.trace("User   " +userOptional.get().getNickName() +"delete his own post with id"+ optionalPost.get().getId_post());
                 postList.remove(optionalPost.get());
             } else {
                 throw new UserIsNotOwnerException("You can not delete not your own post");
@@ -83,6 +87,7 @@ public class PostService {
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             List<Post> postList = user.getPostList();
+            logger.trace("User    " +userOptional.get().getNickName() +"delete all own posts");
             postList.clear();
         }
     }
@@ -108,6 +113,7 @@ public class PostService {
             List<Post> postList=userOptional.get().getPostList();
             if(postList.contains(postOptional.get()))
             {
+                logger.trace("User  " +userOptional.get().getNickName() +"update his own post with id " + postOptional.get().getId_post());
                postRepository.updateContent(content,id);
             }
         }else {
