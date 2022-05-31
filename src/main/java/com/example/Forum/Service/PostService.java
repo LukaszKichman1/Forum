@@ -76,7 +76,6 @@ public class PostService {
             } else {
                 throw new UserIsNotOwnerException("You can not delete not your own post");
             }
-
         }
     }
 
@@ -97,8 +96,6 @@ public class PostService {
         Optional<Post> optionalPost = findById(id);
         if (optionalPost.isPresent()) {
             postRepository.deleteById(id);
-        } else {
-            throw new PostNotFoundException("we can not find post with that id");
         }
     }
 
@@ -116,8 +113,6 @@ public class PostService {
                 logger.trace("User  " +userOptional.get().getNickName() +"update his own post with id " + postOptional.get().getId_post());
                postRepository.updateContent(content,id);
             }
-        }else {
-            throw new PostNotFoundException("we can not find post with that id");
         }
 
 

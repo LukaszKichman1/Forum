@@ -48,14 +48,13 @@ public class CommentService {
                     .build();
             userOptional.get().addComment(commentBuilder);
             optionalPost.get().addComment(commentBuilder);
-            logger.trace("User  "+userOptional.get().getNickName()+"create comment with id  "+commentBuilder.getId_comment());
+            logger.trace("User  " + userOptional.get().getNickName() + "create comment with id  " + commentBuilder.getId_comment());
             return commentRepository.save(commentBuilder);
-        } else {
-            throw new UserNotFoundException("we cant find user with that Id");
         }
-
-
+        return null;
     }
+
+
 
     public Optional<Comment> findById(int id) {
         Optional<Comment> optionalComment = commentRepository.findById(id);
@@ -90,9 +89,7 @@ public class CommentService {
     public void deleteCommentById(int id) {
         Optional<Comment> optionalComment = findById(id);
         if (optionalComment.isPresent()) {
-            commentRepository.deleteOwnCommentById(id);
-        } else {
-            throw new CommentNotFoundException("we cant find comment with that id");
+            commentRepository.deleteById(id);
         }
     }
 
@@ -111,7 +108,7 @@ public class CommentService {
                 commentRepository.updateComment(content,id);
             }
         }else {
-            throw new CommentNotFoundException("we cant find comment with that id");
+            throw new CommentNotFoundException("we cant find comment or user with that id");
         }
     }
 
