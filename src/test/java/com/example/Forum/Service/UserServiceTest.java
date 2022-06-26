@@ -27,11 +27,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class UserServiceTest {
-
 
     @Mock
     private UserRepository userRepository;
@@ -46,18 +44,16 @@ class UserServiceTest {
     private UserService underTest;
 
 
-
     @BeforeEach
     @Deprecated
     void setUp() {
         MockitoAnnotations.initMocks(this);
-        underTest=new UserService(userRepository,passwordEncoder,tokenRepository,mailService);
+        underTest = new UserService(userRepository, passwordEncoder, tokenRepository, mailService);
     }
 
-    //zapisuje uzytkownika
     @Test
     @Deprecated
-    void itShouldSaveNewUser(){
+    void itShouldSaveNewUser() {
         //given
         User user = new User.Builder()
                 .nickName("nick")
@@ -84,9 +80,8 @@ class UserServiceTest {
         assertThat(argumentCaptorValue.isEnabled()).isFalse();
     }
 
-    //nie zapisuje uzytkownika  bo taki uzytkownik juz istnieje
     @Test
-    void itShouldNotSaveNewUserBecauseThatUserAlreadyExist(){
+    void itShouldNotSaveNewUserBecauseThatUserAlreadyExist() {
         //given
         User user = new User.Builder()
                 .nickName("nick")
@@ -99,17 +94,16 @@ class UserServiceTest {
 
 
         given(userRepository.findByNickName("nick")).willReturn(Optional.of(user));
+
         //when
         //then
         assertThatThrownBy(() -> underTest.save(user))
                 .isExactlyInstanceOf(UserCanNotBeCreateException.class)
-                .hasMessageContaining("user have empty fields or user with that nickname already exist");
+                .hasMessageContaining("User have empty fields or user with that nickname already exist");
     }
 
-    //nie zapisuje uzytkownika bo puste pola
     @Test
-    void itShouldNotSaveNewUserBecauseThatUserHaveSomeEmptyFields()
-    {
+    void itShouldNotSaveNewUserBecauseThatUserHaveSomeEmptyFields() {
         //given
         User user = new User.Builder()
                 .nickName("nick")
@@ -120,17 +114,17 @@ class UserServiceTest {
 
 
         given(userRepository.findByNickName("nick")).willReturn(Optional.empty());
+
         //when
         //then
         assertThatThrownBy(() -> underTest.save(user))
                 .isExactlyInstanceOf(UserCanNotBeCreateException.class)
-                .hasMessageContaining("user have empty fields or user with that nickname already exist");
+                .hasMessageContaining("User have empty fields or user with that nickname already exist");
     }
 
-    //znajduje uzytkownika
     @Test
     @Deprecated
-    void itShouldReturnUserByLogin(){
+    void itShouldReturnUserByLogin() {
         //given
         User user = new User.Builder()
                 .nickName("nick")
@@ -142,6 +136,7 @@ class UserServiceTest {
                 .build();
 
         given(userRepository.findByLogin(user.getLogin())).willReturn(Optional.of(user));
+
         //when
         //then
         Optional<User> userOptional = underTest.findByLogin(user.getLogin());
@@ -152,9 +147,8 @@ class UserServiceTest {
                 });
     }
 
-    //aktywuje uzytkownika
     @Test
-    void itShouldActivateUser(){
+    void itShouldActivateUser() {
         //given
         User user = new User.Builder()
                 .nickName("nick")
@@ -173,15 +167,14 @@ class UserServiceTest {
         given(userRepository.findByLogin(user.getLogin())).willReturn(Optional.of(user));
 
         //when
-        underTest.activationUser(user.getLogin(),user.getToken().getValue());
+        underTest.activationUser(user.getLogin(), user.getToken().getValue());
 
         //then
         assertThat(user.isEnabled()).isTrue();
     }
 
-    //nie aktywuje uzytkownika bo taki uzytkownik nie istnieje
     @Test
-    void itShouldNotActivateUserBecauseThatUserDoNotExist(){
+    void itShouldNotActivateUserBecauseThatUserDoNotExist() {
         //given
         User user = new User.Builder()
                 .nickName("nick")
@@ -198,16 +191,16 @@ class UserServiceTest {
         tokenRepository.save(token);
 
         given(userRepository.findByLogin(user.getLogin())).willReturn(Optional.empty());
+
         //when
         //then
-        assertThatThrownBy(() -> underTest.activationUser(user.getLogin(),user.getToken().getValue()))
+        assertThatThrownBy(() -> underTest.activationUser(user.getLogin(), user.getToken().getValue()))
                 .isExactlyInstanceOf(UserCanNotBeActivationException.class)
-                .hasMessageContaining("we cant find user with this id or invalid token value");
+                .hasMessageContaining("We cant find user with this id or invalid token value");
     }
 
-    //nie zwraca uzytkownka po id bo nie ma takiego uzytkownika
     @Test
-    void itShouldeNotReturnUserByIdBecauseThatUserDoNotExist(){
+    void itShouldeNotReturnUserByIdBecauseThatUserDoNotExist() {
         //given
         User user = new User.Builder()
                 .nickName("nick")
@@ -224,13 +217,12 @@ class UserServiceTest {
         //then
         assertThatThrownBy(() -> underTest.findById(user.getId_user()))
                 .isExactlyInstanceOf(UserNotFoundException.class)
-                .hasMessageContaining("we cant find user with that Id");
+                .hasMessageContaining("We cant find user with that Id");
 
     }
 
-    //zwraca uzytkownia po id
     @Test
-    void itShouldeReturnUserById(){
+    void itShouldeReturnUserById() {
         //given
         User user = new User.Builder()
                 .nickName("nick")
@@ -245,7 +237,7 @@ class UserServiceTest {
 
         //when
         //then
-        Optional<User> userOptional=underTest.findById(user.getId_user());
+        Optional<User> userOptional = underTest.findById(user.getId_user());
         assertThat(userOptional.isPresent()).isTrue();
         assertThat(userOptional.get().getNickName()).isEqualTo("nick");
         assertThat(userOptional.get().getLogin()).isEqualTo("login");
@@ -253,9 +245,8 @@ class UserServiceTest {
 
     }
 
-    //zwraca uzytkownika po nicku
     @Test
-    void itShouldeReturnUserByNickname(){
+    void itShouldeReturnUserByNickname() {
         //given
         User user = new User.Builder()
                 .nickName("nick")
@@ -270,16 +261,15 @@ class UserServiceTest {
 
         //when
         //then
-        Optional<User> userOptional=underTest.findByNickName(user.getNickName());
+        Optional<User> userOptional = underTest.findByNickName(user.getNickName());
         assertThat(userOptional.isPresent()).isTrue();
         assertThat(userOptional.get().getNickName()).isEqualTo("nick");
         assertThat(userOptional.get().getLogin()).isEqualTo("login");
         assertThat(userOptional.get().getEmail()).isEqualTo("email@gmail.com");
     }
 
-    //nie zwraca uzytkownika po nicku bo taki uzytkonik nie istenije
     @Test
-    void itShouldeNotReturnUserByNicknameBecauseThatUserDoNotExist(){
+    void itShouldeNotReturnUserByNicknameBecauseThatUserDoNotExist() {
         //given
         User user = new User.Builder()
                 .nickName("nick")
@@ -296,11 +286,11 @@ class UserServiceTest {
         //then
         assertThatThrownBy(() -> underTest.findByNickName(user.getNickName()))
                 .isExactlyInstanceOf(UserNotFoundException.class)
-                .hasMessageContaining("we cant find user with that nickName");
+                .hasMessageContaining("We cant find user with that nickName");
     }
 
     @Test
-    void itShouldeDeleteUserById(){
+    void itShouldeDeleteUserById() {
         //given
         User user = new User.Builder()
                 .nickName("nick")
@@ -320,7 +310,7 @@ class UserServiceTest {
     }
 
     @Test
-    void itShouldeNotDeleteUserByIdBecauseThatUserDoNotExist(){
+    void itShouldeNotDeleteUserByIdBecauseThatUserDoNotExist() {
         //given
         User user = new User.Builder()
                 .nickName("nick")
@@ -334,15 +324,14 @@ class UserServiceTest {
         given(userRepository.findById(user.getId_user())).willReturn(Optional.empty());
 
         //when
+        underTest.deleteById(user.getId_user());
+
         //then
-        assertThatThrownBy(() -> underTest.deleteById(user.getId_user()))
-                .isExactlyInstanceOf(UserNotFoundException.class)
-                .hasMessageContaining("we cant find user with that Id");
+        verify(userRepository, times(1)).findById(user.getId_user());
     }
 
-
     @Test
-    void itShouldeReturnListOfAllUser(){
+    void itShouldeReturnListOfAllUser() {
         //given
         User user1 = new User.Builder()
                 .nickName("nick")

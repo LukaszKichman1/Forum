@@ -22,7 +22,7 @@ public class PostService {
 
     private PostRepository postRepository;
     private UserService userService;
-    Logger logger= LoggerFactory.getLogger(PostService.class);
+    Logger logger = LoggerFactory.getLogger(PostService.class);
 
     @Autowired
     public PostService(PostRepository postRepository, UserService userService) {
@@ -41,10 +41,10 @@ public class PostService {
                     .build();
 
             userOptional.get().addPost(postBuilder);
-            logger.trace("User    " +userOptional.get().getNickName() +" create post with id   " +post.getId_post());
+            logger.trace("User    " + userOptional.get().getNickName() + " create post with id   " + post.getId_post());
             return postRepository.save(postBuilder);
         } else {
-            throw new UserNotFoundException("we cant find user with that Id");
+            return null;
         }
     }
 
@@ -57,7 +57,7 @@ public class PostService {
         if (optionalPost.isPresent()) {
             return optionalPost;
         } else {
-            throw new PostNotFoundException("we cant find post with that Id");
+            throw new PostNotFoundException("We cant find post with that Id");
         }
     }
 
@@ -71,7 +71,7 @@ public class PostService {
 
             Optional<Post> optionalPost = findById(id);
             if (optionalPost.isPresent() && postList.contains(optionalPost.get())) {
-                logger.trace("User   " +userOptional.get().getNickName() +"delete his own post with id"+ optionalPost.get().getId_post());
+                logger.trace("User   " + userOptional.get().getNickName() + "delete his own post with id" + optionalPost.get().getId_post());
                 postList.remove(optionalPost.get());
             } else {
                 throw new UserIsNotOwnerException("You can not delete not your own post");
@@ -85,9 +85,9 @@ public class PostService {
         Optional<User> userOptional = userService.findByNickName(loggeduser);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            List<Post> postList = user.getPostList();
-            logger.trace("User    " +userOptional.get().getNickName() +"delete all own posts");
-            postList.clear();
+            // List<Post> postList = user.getPostList();
+            logger.trace("User    " + user.getNickName() + "delete all own posts");
+            user.getPostList().clear();
         }
     }
 
@@ -100,24 +100,18 @@ public class PostService {
     }
 
     @Transactional
-    public void updatePost(String content,int id)
-    {
+    public void updatePost(String content, int id) {
         String loggeduser = SecurityContextHolder.getContext().getAuthentication().getName();
         Optional<User> userOptional = userService.findByNickName(loggeduser);
-        Optional<Post> postOptional=findById(id);
-        if (userOptional.isPresent() && postOptional.isPresent())
-        {
-            List<Post> postList=userOptional.get().getPostList();
-            if(postList.contains(postOptional.get()))
-            {
-                logger.trace("User  " +userOptional.get().getNickName() +"update his own post with id " + postOptional.get().getId_post());
-               postRepository.updateContent(content,id);
+        Optional<Post> postOptional = findById(id);
+        if (userOptional.isPresent() && postOptional.isPresent()) {
+            List<Post> postList = userOptional.get().getPostList();
+            if (postList.contains(postOptional.get())) {
+                logger.trace("User  " + userOptional.get().getNickName() + "update his own post with id " + postOptional.get().getId_post());
+                postRepository.updateContent(content, id);
             }
         }
-
-
     }
-
 }
 
 

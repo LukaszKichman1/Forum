@@ -1,13 +1,12 @@
 package com.example.Forum.Exception;
 
-public class CommentNotFoundException extends RuntimeException{
+public class CommentNotFoundException extends RuntimeException {
 
     private String errorMessage;
 
-    public CommentNotFoundException(String message)
-    {
+    public CommentNotFoundException(String message) {
         super(message);
     }
 
 
-    }
+}

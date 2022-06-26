@@ -33,7 +33,6 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-
     @GetMapping("/showoneuserbyid")
     public ResponseEntity<Optional> findUserById(@RequestParam int id) {
         return ResponseEntity.ok(userService.findById(id));
@@ -44,13 +43,13 @@ public class UserController {
         return ResponseEntity.ok(userService.findByNickName(nickName));
     }
 
-    @DeleteMapping("/deletebyid")
+    @DeleteMapping("/deleteoneuserbyid")
     public ResponseEntity deleteUserById(@RequestParam int id) {
         userService.deleteById(id);
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/all")
+    @GetMapping("/showallusers")
     public ResponseEntity<List<User>> findAllUsers() {
         return ResponseEntity.ok(userService.findAll());
     }

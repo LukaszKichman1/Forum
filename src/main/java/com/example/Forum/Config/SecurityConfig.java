@@ -12,30 +12,22 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
-public class SecurityConfig extends WebSecurityConfigurerAdapter
-{
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     UserPrincipalDetailsService userPrincipalDetailsService;
 
 
     @Autowired
-    public SecurityConfig( UserPrincipalDetailsService userPrincipalDetailsService)
-    {
-        this.userPrincipalDetailsService=userPrincipalDetailsService;
+    public SecurityConfig(UserPrincipalDetailsService userPrincipalDetailsService) {
+        this.userPrincipalDetailsService = userPrincipalDetailsService;
 
     }
 
-
-
-    //pobieranie uzytkownikow z bazy
     @Override
-    protected void configure(AuthenticationManagerBuilder auth)
-    {
+    protected void configure(AuthenticationManagerBuilder auth) {
         auth.authenticationProvider(authenticationProvider());
     }
 
-
-    //dostep do endpointow
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
@@ -62,21 +54,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 .formLogin().permitAll();
     }
 
-    //sprawdzanie princepalow usera
     @Bean
-    DaoAuthenticationProvider authenticationProvider()
-    {
-        DaoAuthenticationProvider daoAuthenticationProvider=new DaoAuthenticationProvider();
+    DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
         daoAuthenticationProvider.setUserDetailsService(userPrincipalDetailsService);
         return daoAuthenticationProvider;
     }
 
 
-    //hasowanie hasel
     @Bean
-    public PasswordEncoder passwordEncoder()
-    {
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 

@@ -18,29 +18,25 @@ public class CommentController {
     }
 
     @PostMapping("/addcomment")
-    public ResponseEntity<Comment> addComment(@RequestParam int id, String content)
-    {
-        return ResponseEntity.ok(commentService.save(id,content));
+    public ResponseEntity<Comment> addComment(@RequestParam int id, String content) {
+        return ResponseEntity.ok(commentService.save(id, content));
     }
 
-    @DeleteMapping("/deleteowncommentbyid")
-    public ResponseEntity deleteOwnCommentById(@RequestParam int id)
-    {
+    @DeleteMapping("/deleteyourowncommentbyid")
+    public ResponseEntity deleteOwnCommentById(@RequestParam int id) {
         commentService.deleteOwnCommentById(id);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/deletecommentbyid")
-    public ResponseEntity delteCommentById(@RequestParam int id)
-    {
+    public ResponseEntity delteCommentById(@RequestParam int id) {
         commentService.deleteCommentById(id);
         return ResponseEntity.ok().build();
     }
 
     @PutMapping("/updatecomment")
-    public ResponseEntity updateComment(@RequestParam String content,int id)
-    {
-        commentService.updateComment(content,id);
+    public ResponseEntity updateComment(@RequestParam String content, int id) {
+        commentService.updateComment(content, id);
         return ResponseEntity.ok().build();
     }
 

@@ -8,6 +8,7 @@ import com.example.Forum.Exception.PostNotFoundException;
 import com.example.Forum.Exception.UserIsNotOwnerException;
 import com.example.Forum.Exception.UserNotFoundException;
 import com.example.Forum.Repository.CommentRepository;
+import org.assertj.core.api.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -39,20 +40,16 @@ class CommentServiceTest {
     private ArgumentCaptor<Comment> argumentCaptor;
     private CommentService underTest;
 
-
-
-
     @BeforeEach
     @Deprecated
     void setUp() {
         MockitoAnnotations.initMocks(this);
-        underTest=new CommentService(commentRepository,postService,userService);
+        underTest = new CommentService(commentRepository, postService, userService);
     }
 
     @Test
-    void itShouldSaveNewComment(){
+    void itShouldSaveNewComment() {
         //given
-
         User user = new User.Builder()
                 .nickName("nick")
                 .login("login")
@@ -67,7 +64,7 @@ class CommentServiceTest {
                 .user(user)
                 .build();
 
-        Comment comment =new Comment.Builder()
+        Comment comment = new Comment.Builder()
                 .content("comment content")
                 .user(user)
                 .post(post)
@@ -86,11 +83,10 @@ class CommentServiceTest {
         given(SecurityContextHolder.getContext().getAuthentication().getName()).willReturn(user.getNickName());
 
         //when
-
         when(userService.findByNickName(user.getNickName())).thenReturn(Optional.of(user));
         when(postService.findById(post.getId_post())).thenReturn(Optional.of(post));
 
-        underTest.save(post.getId_post(),comment.getContent());
+        underTest.save(post.getId_post(), comment.getContent());
 
         //then
         then(commentRepository).should().save(argumentCaptor.capture());
@@ -102,11 +98,9 @@ class CommentServiceTest {
     }
 
 
-
     @Test
-    void itShouldNotSaveNewCommentBecauseUserDoNotExist(){
+    void itShouldNotSaveNewCommentBecauseUserDoNotExist() {
         //given
-
         User user = new User.Builder()
                 .nickName("nick")
                 .login("login")
@@ -121,7 +115,7 @@ class CommentServiceTest {
                 .user(user)
                 .build();
 
-        Comment comment =new Comment.Builder()
+        Comment comment = new Comment.Builder()
                 .content("comment content")
                 .user(user)
                 .post(post)
@@ -140,18 +134,17 @@ class CommentServiceTest {
         given(SecurityContextHolder.getContext().getAuthentication().getName()).willReturn(user.getNickName());
 
         //when
-
         when(userService.findByNickName(user.getNickName())).thenReturn(Optional.empty());
         when(postService.findById(post.getId_post())).thenReturn(Optional.of(post));
 
+        underTest.save(post.getId_post(), comment.getContent());
+
         //then
-        assertThatThrownBy(() -> underTest.save(post.getId_post(),comment.getContent()))
-                .isExactlyInstanceOf(UserNotFoundException.class)
-                .hasMessageContaining("we cant find user with that Id");
+        then(commentRepository).shouldHaveNoInteractions();
     }
 
     @Test
-    void itShouldNotSaveNewCommentBecauseThatPostDoNotExist(){
+    void itShouldNotSaveNewCommentBecauseThatPostDoNotExist() {
         //given
 
         User user = new User.Builder()
@@ -168,7 +161,7 @@ class CommentServiceTest {
                 .user(user)
                 .build();
 
-        Comment comment =new Comment.Builder()
+        Comment comment = new Comment.Builder()
                 .content("comment content")
                 .user(user)
                 .post(post)
@@ -191,14 +184,14 @@ class CommentServiceTest {
         when(userService.findByNickName(user.getNickName())).thenReturn(Optional.of(user));
         when(postService.findById(post.getId_post())).thenReturn(Optional.empty());
 
+        underTest.save(post.getId_post(), comment.getContent());
+
         //then
-        assertThatThrownBy(() -> underTest.save(post.getId_post(),comment.getContent()))
-                .isExactlyInstanceOf(PostNotFoundException.class)
-                .hasMessageContaining("we cant find post with that Id");
+        then(commentRepository).shouldHaveNoInteractions();
     }
 
     @Test
-    void itShouldReturnCommentById(){
+    void itShouldReturnCommentById() {
         //given
 
         User user = new User.Builder()
@@ -215,7 +208,7 @@ class CommentServiceTest {
                 .user(user)
                 .build();
 
-        Comment comment =new Comment.Builder()
+        Comment comment = new Comment.Builder()
                 .content("comment content")
                 .user(user)
                 .post(post)
@@ -229,7 +222,7 @@ class CommentServiceTest {
 
         //when
         //then
-        Optional<Comment> commentOptional=underTest.findById(comment.getId_comment());
+        Optional<Comment> commentOptional = underTest.findById(comment.getId_comment());
         assertThat(commentOptional.isPresent()).isTrue();
         assertThat(commentOptional.get().getContent()).isEqualTo("comment content");
         assertThat(commentOptional.get().getUser()).isEqualTo(user);
@@ -237,7 +230,7 @@ class CommentServiceTest {
     }
 
     @Test
-    void itShouldNotReturnCommentByIdBecauseThatCommentDoNotExist(){
+    void itShouldNotReturnCommentByIdBecauseThatCommentDoNotExist() {
         //given
 
         User user = new User.Builder()
@@ -254,7 +247,7 @@ class CommentServiceTest {
                 .user(user)
                 .build();
 
-        Comment comment =new Comment.Builder()
+        Comment comment = new Comment.Builder()
                 .content("comment content")
                 .user(user)
                 .post(post)
@@ -271,11 +264,11 @@ class CommentServiceTest {
         //then
         assertThatThrownBy(() -> underTest.findById(comment.getId_comment()))
                 .isExactlyInstanceOf(CommentNotFoundException.class)
-                .hasMessageContaining("we cant find comment with that id");
+                .hasMessageContaining("We cant find comment with that id");
     }
 
     @Test
-    void itShouldDeleteOwnCommentById(){
+    void itShouldDeleteOwnCommentById() {
         //given
 
         User user = new User.Builder()
@@ -292,7 +285,7 @@ class CommentServiceTest {
                 .user(user)
                 .build();
 
-        Comment comment =new Comment.Builder()
+        Comment comment = new Comment.Builder()
                 .content("comment content")
                 .user(user)
                 .post(post)
@@ -322,7 +315,7 @@ class CommentServiceTest {
     }
 
     @Test
-    void itShouldNotDeleteOwnCommentByIdBecauseUserDoNotExist(){
+    void itShouldNotDeleteOwnCommentByIdBecauseUserDoNotExist() {
         //given
 
         User user = new User.Builder()
@@ -339,7 +332,7 @@ class CommentServiceTest {
                 .user(user)
                 .build();
 
-        Comment comment =new Comment.Builder()
+        Comment comment = new Comment.Builder()
                 .content("comment content")
                 .user(user)
                 .post(post)
@@ -363,17 +356,16 @@ class CommentServiceTest {
         when(postService.findById(post.getId_post())).thenReturn(Optional.of(post));
 
 
-        //then
+        underTest.deleteOwnCommentById(comment.getId_comment());
 
-        assertThatThrownBy(() -> underTest.deleteOwnCommentById(comment.getId_comment()))
-                .isExactlyInstanceOf(UserNotFoundException.class)
-                .hasMessageContaining("we cant find user with that Id");
+        //then
+        then(commentRepository).shouldHaveNoInteractions();
     }
 
-    @Test
-    void itShouldNotDeleteOwnCommentByIdBecauseThatPostDoNotExist(){
-        //given
 
+    @Test
+    void itShouldNotDeleteOwnCommentByIdBecauseUserIsNotOwner() {
+        //given
         User user = new User.Builder()
                 .nickName("nick")
                 .login("login")
@@ -388,57 +380,7 @@ class CommentServiceTest {
                 .user(user)
                 .build();
 
-        Comment comment =new Comment.Builder()
-                .content("comment content")
-                .user(user)
-                .post(post)
-                .build();
-
-        user.getPostList().add(post);
-        user.addComment(comment);
-        post.addComment(comment);
-
-        Authentication authentication = mock(Authentication.class);
-        SecurityContext securityContext = mock(SecurityContext.class);
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        SecurityContextHolder.setContext(securityContext);
-        when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(user);
-
-        given(SecurityContextHolder.getContext().getAuthentication().getName()).willReturn(user.getNickName());
-
-        //when
-
-        when(userService.findByNickName(user.getNickName())).thenReturn(Optional.of(user));
-        when(postService.findById(post.getId_post())).thenReturn(Optional.empty());
-        when(commentRepository.findById(comment.getId_comment())).thenReturn(Optional.of(comment));
-
-        //then
-
-        assertThatThrownBy(() -> underTest.deleteOwnCommentById(comment.getId_comment()))
-                .isExactlyInstanceOf(PostNotFoundException.class)
-                .hasMessageContaining("we cant find post with that Id");
-    }
-
-
-    @Test
-    void itShouldNotDeleteOwnCommentByIdBecauseUserIsNotOwner(){
-        //given
-
-        User user = new User.Builder()
-                .nickName("nick")
-                .login("login")
-                .password("dupa")
-                .email("email@gmail.com")
-                .roles("ROLE_USER")
-                .isEnabled(false)
-                .build();
-
-        Post post = new Post.Builder()
-                .content("content")
-                .user(user)
-                .build();
-
-        Comment comment =new Comment.Builder()
+        Comment comment = new Comment.Builder()
                 .content("comment content")
                 .user(user)
                 .post(post)
@@ -456,19 +398,18 @@ class CommentServiceTest {
         given(SecurityContextHolder.getContext().getAuthentication().getName()).willReturn(user.getNickName());
 
         //when
-
         when(userService.findByNickName(user.getNickName())).thenReturn(Optional.of(user));
         when(postService.findById(post.getId_post())).thenReturn(Optional.of(post));
         when(commentRepository.findById(comment.getId_comment())).thenReturn(Optional.of(comment));
 
         //then
-
         assertThatThrownBy(() -> underTest.deleteOwnCommentById(comment.getId_comment()))
                 .isExactlyInstanceOf(UserIsNotOwnerException.class)
                 .hasMessageContaining("You can not delete not your own comment");
     }
+
     @Test
-    void itShouldDeleteCommentById(){
+    void itShouldDeleteCommentById() {
         //given
 
         User user = new User.Builder()
@@ -485,7 +426,7 @@ class CommentServiceTest {
                 .user(user)
                 .build();
 
-        Comment comment =new Comment.Builder()
+        Comment comment = new Comment.Builder()
                 .content("comment content")
                 .user(user)
                 .post(post)
@@ -506,9 +447,8 @@ class CommentServiceTest {
     }
 
 
-
     @Test
-    void itShouldNotDeleteCommentByIdBecauseThatCommentDoNotExist(){
+    void itShouldNotDeleteCommentByIdBecauseThatCommentDoNotExist() {
         //given
 
         User user = new User.Builder()
@@ -525,7 +465,7 @@ class CommentServiceTest {
                 .user(user)
                 .build();
 
-        Comment comment =new Comment.Builder()
+        Comment comment = new Comment.Builder()
                 .content("comment content")
                 .user(user)
                 .post(post)
@@ -543,12 +483,12 @@ class CommentServiceTest {
 
         assertThatThrownBy(() -> underTest.deleteCommentById(comment.getId_comment()))
                 .isExactlyInstanceOf(CommentNotFoundException.class)
-                .hasMessageContaining("we cant find comment with that id");
+                .hasMessageContaining("We cant find comment with that id");
 
     }
 
     @Test
-    void itShouldUpdateOwnCommentById(){
+    void itShouldUpdateOwnCommentById() {
         //given
 
         User user = new User.Builder()
@@ -565,7 +505,7 @@ class CommentServiceTest {
                 .user(user)
                 .build();
 
-        Comment comment =new Comment.Builder()
+        Comment comment = new Comment.Builder()
                 .content("comment content")
                 .user(user)
                 .post(post)
@@ -587,15 +527,15 @@ class CommentServiceTest {
 
         when(userService.findByNickName(user.getNickName())).thenReturn(Optional.of(user));
         when(commentRepository.findById(post.getId_post())).thenReturn(Optional.of(comment));
-        underTest.updateComment("new content",post.getId_post());
+        underTest.updateComment("new content", post.getId_post());
 
         //then
 
-        verify(commentRepository).updateComment("new content",post.getId_post());
+        verify(commentRepository).updateComment("new content", post.getId_post());
     }
 
     @Test
-    void itShouldNotUpdateOwnCommentByIdBecauseThatUserDoNotExistOrCommentDoNotExist(){
+    void itShouldNotUpdateOwnCommentByIdBecauseThatUserDoNotExistOrCommentDoNotExist() {
         //given
 
         User user = new User.Builder()
@@ -612,7 +552,7 @@ class CommentServiceTest {
                 .user(user)
                 .build();
 
-        Comment comment =new Comment.Builder()
+        Comment comment = new Comment.Builder()
                 .content("comment content")
                 .user(user)
                 .post(post)
@@ -637,9 +577,9 @@ class CommentServiceTest {
 
         //then
 
-        assertThatThrownBy(() -> underTest.updateComment("new content",comment.getId_comment()))
+        assertThatThrownBy(() -> underTest.updateComment("new content", comment.getId_comment()))
                 .isExactlyInstanceOf(CommentNotFoundException.class)
-                .hasMessageContaining("we cant find comment or user with that id");
+                .hasMessageContaining("We cant find comment or user with that id");
     }
 
 

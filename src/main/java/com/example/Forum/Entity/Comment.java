@@ -19,18 +19,17 @@ public class Comment {
             cascade = CascadeType.ALL
 
     )
-    @JoinColumn(name="user_id",referencedColumnName = "Id_user")
-    @JsonIgnoreProperties({"postList","commentList"})
+    @JoinColumn(name = "user_id", referencedColumnName = "Id_user")
+    @JsonIgnoreProperties({"postList", "commentList"})
     private User user;
 
     @ManyToOne(
             fetch = FetchType.EAGER,
             cascade = CascadeType.ALL
     )
-    @JoinColumn(name="post_id",referencedColumnName = "Id_post")
-    @JsonIgnoreProperties({"user","commentList"})
+    @JoinColumn(name = "post_id", referencedColumnName = "Id_post")
+    @JsonIgnoreProperties({"user", "commentList"})
     private Post post;
-
 
     public Comment() {
     }
@@ -76,23 +75,22 @@ public class Comment {
             this.content = content;
             return this;
         }
-        public Builder user(User user)
-        {
-            this.user=user;
+
+        public Builder user(User user) {
+            this.user = user;
             return this;
         }
 
-        public Builder post(Post post)
-        {
-            this.post=post;
+        public Builder post(Post post) {
+            this.post = post;
             return this;
         }
 
         public Comment build() {
             Comment comment = new Comment();
             comment.content = this.content;
-            comment.user=this.user;
-            comment.post=this.post;
+            comment.user = this.user;
+            comment.post = this.post;
             return comment;
         }
     }

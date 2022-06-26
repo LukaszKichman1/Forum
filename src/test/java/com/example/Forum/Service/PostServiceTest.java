@@ -33,7 +33,6 @@ import static org.mockito.Mockito.*;
 
 class PostServiceTest {
 
-
     @Mock
     private UserService userService;
     @Mock
@@ -44,20 +43,17 @@ class PostServiceTest {
     private ArgumentCaptor<Post> argumentCaptor;
     private PostService underTest;
 
-
     @BeforeEach
     @Deprecated
     void setUp() {
         MockitoAnnotations.initMocks(this);
-        underTest=new PostService(postRepository,userService);
+        underTest = new PostService(postRepository, userService);
 
     }
 
-    //zapisuje posta
     @Test
-    void itShouldSaveNewPost(){
+    void itShouldSaveNewPost() {
         //given
-
         User user = new User.Builder()
                 .nickName("nick")
                 .login("login")
@@ -94,9 +90,8 @@ class PostServiceTest {
 
 
     @Test
-    void itShouldNotSaveNewPostBecauseUserDoNotExist(){
+    void itShouldNotSaveNewPostBecauseUserDoNotExist() {
         //given
-
         User user = new User.Builder()
                 .nickName("nick")
                 .login("login")
@@ -117,19 +112,18 @@ class PostServiceTest {
                 .user(user)
                 .build();
 
-        given(SecurityContextHolder.getContext().getAuthentication().getName()).willReturn(user.getNickName());
-        given(userService.findByNickName("nick")).willReturn(Optional.empty());
-
         //when
-        //then
-        assertThatThrownBy(() -> underTest.save(post))
-                .isExactlyInstanceOf(UserNotFoundException.class)
-                .hasMessageContaining("we cant find user with that Id");
+        when(SecurityContextHolder.getContext().getAuthentication().getName()).thenReturn(user.getNickName());
+        when(userService.findByNickName("nick")).thenReturn(Optional.empty());
 
+        underTest.save(post);
+
+        //then
+        then(postRepository).shouldHaveNoInteractions();
     }
 
     @Test
-    void itShouldReturnListOfAllPosts(){
+    void itShouldReturnListOfAllPosts() {
         //given
         User user = new User.Builder()
                 .nickName("nick")
@@ -163,9 +157,8 @@ class PostServiceTest {
     }
 
     @Test
-    void itShouldReturnPostById(){
+    void itShouldReturnPostById() {
         //given
-
         User user = new User.Builder()
                 .nickName("nick")
                 .login("login")
@@ -184,7 +177,7 @@ class PostServiceTest {
 
         //when
         //then
-        Optional<Post> postOptional=underTest.findById(post.getId_post());
+        Optional<Post> postOptional = underTest.findById(post.getId_post());
         assertThat(postOptional.isPresent()).isTrue();
         assertThat(postOptional.get().getContent()).isEqualTo("content");
         assertThat(postOptional.get().getUser()).isEqualTo(user);
@@ -192,9 +185,8 @@ class PostServiceTest {
     }
 
     @Test
-    void itShouldNotReturnPostByIdBecauseThatPostDoNotExist(){
+    void itShouldNotReturnPostByIdBecauseThatPostDoNotExist() {
         //given
-
         User user = new User.Builder()
                 .nickName("nick")
                 .login("login")
@@ -210,20 +202,18 @@ class PostServiceTest {
                 .build();
 
 
-
         given(postRepository.findById(post.getId_post())).willReturn(Optional.empty());
 
         //when
         //then
         assertThatThrownBy(() -> underTest.findById(post.getId_post()))
                 .isExactlyInstanceOf(PostNotFoundException.class)
-                .hasMessageContaining("we cant find post with that Id");
+                .hasMessageContaining("We cant find post with that Id");
     }
 
     @Test
-    void itShouldDeletePostOwnByUser(){
+    void itShouldDeletePostOwnByUser() {
         //given
-
         User user = new User.Builder()
                 .nickName("nick")
                 .login("login")
@@ -259,9 +249,8 @@ class PostServiceTest {
 
 
     @Test
-    void itShouldNotDeletePostOwnByUserBecauseThatUserIsNotOwner(){
+    void itShouldNotDeletePostOwnByUserBecauseThatUserIsNotOwner() {
         //given
-
         User user = new User.Builder()
                 .nickName("nick")
                 .login("login")
@@ -286,19 +275,18 @@ class PostServiceTest {
         given(SecurityContextHolder.getContext().getAuthentication().getName()).willReturn(user.getNickName());
 
         //when
-
         when(userService.findByNickName(user.getNickName())).thenReturn(Optional.of(user));
         when(postRepository.findById(post.getId_post())).thenReturn(Optional.of(post));
-        //then
 
+        //then
         assertThatThrownBy(() -> underTest.deleteOwnPostById(post.getId_post()))
                 .isExactlyInstanceOf(UserIsNotOwnerException.class)
                 .hasMessageContaining("You can not delete not your own post");
     }
-    @Test
-    void itShouldNotDeletePostOwnByUserBecauseUserDoNotExist(){
-        //given
 
+    @Test
+    void itShouldNotDeletePostOwnByUserBecauseUserDoNotExist() {
+        //given
         User user = new User.Builder()
                 .nickName("nick")
                 .login("login")
@@ -324,20 +312,18 @@ class PostServiceTest {
         given(SecurityContextHolder.getContext().getAuthentication().getName()).willReturn(user.getNickName());
 
         //when
-
         when(userService.findByNickName(user.getNickName())).thenReturn(Optional.empty());
         when(postRepository.findById(post.getId_post())).thenReturn(Optional.of(post));
 
+        underTest.deleteOwnPostById(post.getId_post());
 
         //then
-        assertThatThrownBy(() -> underTest.deleteOwnPostById(post.getId_post()))
-                .isExactlyInstanceOf(UserNotFoundException.class)
-                .hasMessageContaining("we cant find user with that nickName");
-
+        then(postRepository).shouldHaveNoInteractions();
     }
-    @Test
-    void itShouldDeleteAllPostsOwnByUser(){
 
+    @Test
+    void itShouldDeleteAllPostsOwnByUser() {
+        //given
         User user = new User.Builder()
                 .nickName("nick")
                 .login("login")
@@ -375,14 +361,11 @@ class PostServiceTest {
         //then
         underTest.deleteAllOwnPosts();
         assertTrue(user.getPostList().isEmpty());
-
     }
 
-
     @Test
-    void itShouldNotDeleteAllPostsOwnByUserBecauseUserDoNotExist(){
+    void itShouldNotDeleteAllPostsOwnByUserBecauseUserDoNotExist() {
         //given
-
         User user = new User.Builder()
                 .nickName("nick")
                 .login("login")
@@ -417,17 +400,15 @@ class PostServiceTest {
         when(userService.findByNickName(user.getNickName())).thenReturn(Optional.empty());
         when(postRepository.findById(post.getId_post())).thenReturn(Optional.of(post));
 
-        //then
+        underTest.deleteOwnPostById(post.getId_post());
 
-        assertThatThrownBy(() -> underTest.deleteOwnPostById(post.getId_post()))
-                .isExactlyInstanceOf(UserNotFoundException.class)
-                .hasMessageContaining("we cant find user with that nickName");
+        //then
+        then(postRepository).shouldHaveNoInteractions();
     }
 
     @Test
-    void itShouldDeletePostById(){
+    void itShouldDeletePostById() {
         //given
-
         User user = new User.Builder()
                 .nickName("nick")
                 .login("login")
@@ -454,9 +435,8 @@ class PostServiceTest {
 
 
     @Test
-    void itShouldNotDeletePostByIdBecauseThatPostDoNotExist(){
+    void itShouldNotDeletePostByIdBecauseThatPostDoNotExist() {
         //given
-
         User user = new User.Builder()
                 .nickName("nick")
                 .login("login")
@@ -479,13 +459,12 @@ class PostServiceTest {
         //then
         assertThatThrownBy(() -> underTest.deletePostById(post.getId_post()))
                 .isExactlyInstanceOf(PostNotFoundException.class)
-                .hasMessageContaining("we cant find post with that Id");
+                .hasMessageContaining("We cant find post with that Id");
     }
 
     @Test
-    void itShouldUpdateOwnPostById(){
+    void itShouldUpdateOwnPostById() {
         //given
-
         User user = new User.Builder()
                 .nickName("nick")
                 .login("login")
@@ -510,22 +489,18 @@ class PostServiceTest {
 
         given(SecurityContextHolder.getContext().getAuthentication().getName()).willReturn(user.getNickName());
 
-
         //when
-
         when(userService.findByNickName(user.getNickName())).thenReturn(Optional.of(user));
         when(postRepository.findById(post.getId_post())).thenReturn(Optional.of(post));
-        underTest.updatePost("new content",post.getId_post());
+        underTest.updatePost("new content", post.getId_post());
 
         //then
-
-        verify(postRepository).updateContent("new content",post.getId_post());
+        verify(postRepository).updateContent("new content", post.getId_post());
     }
 
     @Test
-    void itShouldNotUpdateOwnPostByIdBecauseUserDoNotExist(){
+    void itShouldNotUpdateOwnPostByIdBecauseUserDoNotExist() {
         //given
-
         User user = new User.Builder()
                 .nickName("nick")
                 .login("login")
@@ -552,21 +527,20 @@ class PostServiceTest {
 
 
         //when
-
         when(userService.findByNickName(user.getNickName())).thenReturn(Optional.empty());
         when(postRepository.findById(post.getId_post())).thenReturn(Optional.of(post));
 
-        //then
+        underTest.updatePost("new content", post.getId_post());
 
-        assertThatThrownBy(() -> underTest.updatePost("new content",post.getId_post()))
-                .isExactlyInstanceOf(UserNotFoundException.class)
-                .hasMessageContaining("we cant find user with that nickName");
+        //then
+        verify(postRepository, times(1)).findById(post.getId_post());
+
     }
 
-    @Test
-    void itShouldNotUpdateOwnPostByIdBecauseThatPostDoNotExist(){
-        //given
 
+    @Test
+    void itShouldNotUpdateOwnPostByIdBecauseThatPostDoNotExist() {
+        //given
         User user = new User.Builder()
                 .nickName("nick")
                 .login("login")
@@ -593,15 +567,13 @@ class PostServiceTest {
 
 
         //when
-
         when(userService.findByNickName(user.getNickName())).thenReturn(Optional.of(user));
         when(postRepository.findById(post.getId_post())).thenReturn(Optional.empty());
 
         //then
-
-        assertThatThrownBy(() -> underTest.updatePost("new content",post.getId_post()))
+        assertThatThrownBy(() -> underTest.updatePost("new content", post.getId_post()))
                 .isExactlyInstanceOf(PostNotFoundException.class)
-                .hasMessageContaining("we cant find post with that Id");
+                .hasMessageContaining("We cant find post with that Id");
 
     }
 

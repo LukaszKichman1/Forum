@@ -9,9 +9,9 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.criteria.CriteriaBuilder;
 
 @Repository
-public interface PostRepository extends JpaRepository<Post, Integer>{
+public interface PostRepository extends JpaRepository<Post, Integer> {
 
     @Modifying
-    @Query(nativeQuery= true,value="UPDATE posts SET content=?1 where id_post = ?2")
-   void updateContent(String content,int id);
+    @Query(nativeQuery = true, value = "UPDATE posts SET content=?1 where id_post = ?2")
+    void updateContent(String content, int id);
 }

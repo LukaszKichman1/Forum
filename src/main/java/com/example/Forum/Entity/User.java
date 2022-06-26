@@ -13,7 +13,6 @@ import java.util.Set;
 @Table(name = "users")
 public class User {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int Id_user;
@@ -35,7 +34,7 @@ public class User {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    @JsonIgnoreProperties({"user","commentList"})
+    @JsonIgnoreProperties({"user", "commentList"})
     private List<Post> postList = new ArrayList<>();
 
     @OneToMany(
@@ -45,7 +44,7 @@ public class User {
             orphanRemoval = true
     )
     @JsonIgnoreProperties("user")
-    private List<Comment> commentList =new ArrayList<>();
+    private List<Comment> commentList = new ArrayList<>();
 
     @OneToOne
     @JoinColumn(name = "id_token", referencedColumnName = "Id_token")
@@ -63,8 +62,7 @@ public class User {
         return Id_user;
     }
 
-    public void addPost(Post post)
-    {
+    public void addPost(Post post) {
         this.postList.add(post);
     }
 
@@ -72,8 +70,7 @@ public class User {
         Id_user = id_user;
     }
 
-    public void addComment(Comment comment)
-    {
+    public void addComment(Comment comment) {
         this.commentList.add(comment);
     }
 

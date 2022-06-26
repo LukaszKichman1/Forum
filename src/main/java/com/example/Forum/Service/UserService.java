@@ -44,7 +44,7 @@ public class UserService {
                 || user.getNickName() == null
                 || userOptional.isPresent()
         ) {
-            throw new UserCanNotBeCreateException("user have empty fields or user with that nickname already exist");
+            throw new UserCanNotBeCreateException("User have empty fields or user with that nickname already exist");
         } else {
             User userBuilder = new User.Builder()
                     .nickName(user.getNickName())
@@ -59,7 +59,7 @@ public class UserService {
             userBuilder.setToken(token);
             tokenRepository.save(token);
             mailService.SenderMail(user.getEmail(), "link : http://localhost:8080/user/activation   Your token=" + token.getValue(), "activation of your account");
-            logger.trace("User" +userBuilder.getNickName() +" was created");
+            logger.trace("User" + userBuilder.getNickName() + " was created");
             return userRepository.save(userBuilder);
         }
     }
@@ -73,15 +73,14 @@ public class UserService {
     public void activationUser(String login, int valueOfToken) {
 
         Optional<User> optionalUser = userRepository.findByLogin(login);
-
         if (optionalUser.isPresent() && optionalUser
                 .get().
                 getToken().
                 getValue() == valueOfToken) {
-            logger.trace("User" +optionalUser.get().getNickName() +" was activated");
+            logger.trace("User" + optionalUser.get().getNickName() + " was activated");
             optionalUser.get().setEnabled(true);
         } else {
-            throw new UserCanNotBeActivationException("we cant find user with this id or invalid token value");
+            throw new UserCanNotBeActivationException("We cant find user with this id or invalid token value");
         }
     }
 
@@ -90,7 +89,7 @@ public class UserService {
         if (userOptional.isPresent()) {
             return userOptional;
         } else {
-            throw new UserNotFoundException("we cant find user with that Id");
+            throw new UserNotFoundException("We cant find user with that Id");
         }
     }
 
@@ -99,7 +98,7 @@ public class UserService {
         if (userOptional.isPresent()) {
             return userOptional;
         } else {
-            throw new UserNotFoundException("we cant find user with that nickName");
+            throw new UserNotFoundException("We cant find user with that nickName");
         }
     }
 
@@ -109,12 +108,11 @@ public class UserService {
         Optional<User> userOptional = userRepository.findById(id);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            logger.trace("User" +userOptional.get().getNickName() +" was deleted");
+            logger.trace("User" + userOptional.get().getNickName() + " was deleted");
             userRepository.deleteById(user.getId_user());
-        } else {
-            throw new UserNotFoundException("we cant find user with that Id");
         }
     }
+
 
     public List<User> findAll() {
         return userRepository.findAll();

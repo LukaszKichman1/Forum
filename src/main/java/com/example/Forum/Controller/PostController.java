@@ -22,7 +22,7 @@ public class PostController {
         this.postService = postService;
     }
 
-    @PostMapping("/add")
+    @PostMapping("/addpost")
     public ResponseEntity<Post> addPost(@RequestBody Post post) {
         return ResponseEntity.ok(postService.save(post));
     }
@@ -32,33 +32,32 @@ public class PostController {
         return ResponseEntity.ok(postService.findAll());
     }
 
-    @GetMapping("/showonybyid")
+    @GetMapping("/showonebyid")
     public ResponseEntity<Optional> showOneById(@RequestParam int id) {
         return ResponseEntity.ok(postService.findById(id));
     }
 
-    @DeleteMapping("/deleteownpostbyid")
+    @DeleteMapping("/deleteyourownpostbyid")
     public ResponseEntity deleteOwnPostById(@RequestParam int id) {
         postService.deleteOwnPostById(id);
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/deleteallownpost")
+    @DeleteMapping("/deleteallyporownpost")
     public ResponseEntity deleteAllOwnPostById() {
         postService.deleteAllOwnPosts();
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/deletepostbyid")
+    @DeleteMapping("/deleteonepostbyid")
     public ResponseEntity deletePostById(@RequestParam int id) {
         postService.deletePostById(id);
         return ResponseEntity.ok().build();
     }
 
     @PutMapping("/updatepost")
-    public ResponseEntity updatePost(@RequestParam String content,int id)
-    {
-        postService.updatePost(content,id);
+    public ResponseEntity updatePost(@RequestParam String content, int id) {
+        postService.updatePost(content, id);
         return ResponseEntity.ok().build();
     }
 

@@ -26,7 +26,7 @@ public class CommentService {
     private CommentRepository commentRepository;
     private PostService postService;
     private UserService userService;
-    Logger logger= LoggerFactory.getLogger(CommentService.class);
+    Logger logger = LoggerFactory.getLogger(CommentService.class);
 
     @Autowired
     public CommentService(CommentRepository commentRepository, PostService postService, UserService userService) {
@@ -55,13 +55,12 @@ public class CommentService {
     }
 
 
-
     public Optional<Comment> findById(int id) {
         Optional<Comment> optionalComment = commentRepository.findById(id);
         if (optionalComment.isPresent()) {
             return optionalComment;
         } else {
-            throw new CommentNotFoundException("we cant find comment with that id");
+            throw new CommentNotFoundException("We cant find comment with that id");
         }
     }
 
@@ -75,7 +74,7 @@ public class CommentService {
 
             Optional<Comment> optionalComment = findById(id);
             if (optionalComment.isPresent() && commentList.contains(optionalComment.get())) {
-                logger.trace("User" +userOptional.get().getNickName() +"delete his own comment with id  "+ optionalComment.get().getId_comment());
+                logger.trace("User" + userOptional.get().getNickName() + "delete his own comment with id  " + optionalComment.get().getId_comment());
                 commentRepository.deleteOwnCommentById(id);
             } else {
                 throw new UserIsNotOwnerException("You can not delete not your own comment");
@@ -83,7 +82,6 @@ public class CommentService {
 
         }
     }
-
 
     @Transactional
     public void deleteCommentById(int id) {
@@ -94,24 +92,20 @@ public class CommentService {
     }
 
     @Transactional
-    public void updateComment(String content, int id)
-    {
+    public void updateComment(String content, int id) {
         String loggeduser = SecurityContextHolder.getContext().getAuthentication().getName();
         Optional<User> userOptional = userService.findByNickName(loggeduser);
-        Optional<Comment> commentOptional=findById(id);
-        if(userOptional.isPresent() && commentOptional.isPresent())
-        {
-            List<Comment> commentList=userOptional.get().getCommentList();
-            if(commentList.contains(commentOptional.get()))
-            {
-                logger.trace("User" +userOptional.get().getNickName() +"update his own comment with id  "+commentOptional.get().getId_comment());
-                commentRepository.updateComment(content,id);
+        Optional<Comment> commentOptional = findById(id);
+        if (userOptional.isPresent() && commentOptional.isPresent()) {
+            List<Comment> commentList = userOptional.get().getCommentList();
+            if (commentList.contains(commentOptional.get())) {
+                logger.trace("User" + userOptional.get().getNickName() + "update his own comment with id  " + commentOptional.get().getId_comment());
+                commentRepository.updateComment(content, id);
             }
-        }else {
-            throw new CommentNotFoundException("we cant find comment or user with that id");
+        } else {
+            throw new CommentNotFoundException("We cant find comment or user with that id");
         }
     }
-
 
 }
 
