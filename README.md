@@ -38,6 +38,8 @@ My project is kind of web forum that means user can sign up, sing in, create a p
 
 - Sign out
 
+## A few screen from postman
+
 
 ![addcomment](https://user-images.githubusercontent.com/108268872/175955600-5ef594a6-f928-4b93-bfd7-b4eafe117f12.png)
 
