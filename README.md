@@ -37,3 +37,14 @@ My project is kind of web forum that means user can sign up, sing in, create a p
 - Updating your own comment by Id (required be authenticated)
 
 - Sign out
+
+
+![addcomment](https://user-images.githubusercontent.com/108268872/175955600-5ef594a6-f928-4b93-bfd7-b4eafe117f12.png)
+
+![error](https://user-images.githubusercontent.com/108268872/175955610-5793c8c9-31e6-49f3-a852-c0c21b34ff1e.png)
+
+
+![jedenpost](https://user-images.githubusercontent.com/108268872/175955641-e86cadfe-f7ac-447b-9c6b-00dfdc7e7146.png)
+![postshowall](https://user-images.githubusercontent.com/108268872/175955650-93903add-4c93-4219-8053-485bfe7648a0.png)
+
+
